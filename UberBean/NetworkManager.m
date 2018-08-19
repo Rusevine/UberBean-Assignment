@@ -9,11 +9,17 @@
 #import "NetworkManager.h"
 #import "Cafe.h"
 
+@interface NetworkManager ()
+
+
+@end
+
+
 @implementation NetworkManager
 
-+ (void) getCoffee{
-    float latitude = 43.643473;
-    float longitude = -79.392723;
++ (void)getCoffee:(CLLocation*)location andCompletion:(void (^)(NSArray *))completion{
+    float latitude = location.coordinate.latitude;
+    float longitude = location.coordinate.longitude;
     
     NSString *urlstring = [NSString stringWithFormat:@"https://api.yelp.com/v3/businesses/search?term=cafe&latitude=%f&longitude=%f",latitude,longitude];
     NSURL *url = [NSURL URLWithString:urlstring];
@@ -45,11 +51,10 @@
         NSMutableArray *businesses = [@[] mutableCopy];
         for(NSDictionary *business in coffeeShops){
             Cafe *cafe = [[Cafe alloc] initWithShop:business];
+           // CoffeeAnnotation *annotation = [[CoffeeAnnotation alloc] initWithCoordinate:cafe.coordinate];
             [businesses addObject:cafe];
         }
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            NSLog(@"%@",businesses);
-        }];
+        completion(businesses);
     }];
     [task resume];
 }

@@ -19,8 +19,13 @@
     self = [super init];
     if (self) {
         _shopInfo = shop;
+        CLLocationDegrees latitude = [shop[@"coordinates"][@"latitude"] doubleValue];
+        CLLocationDegrees longitude = [shop[@"coordinates"][@"longitude"] doubleValue];
+        self.coordinate = CLLocationCoordinate2DMake(latitude,longitude);
+        
     }
     return self;
 }
+
 
 @end

@@ -8,12 +8,14 @@
 
 #import "ViewController.h"
 #import "NetworkManager.h"
+#import "Cafe.h"
 
 
 @interface ViewController () <CLLocationManagerDelegate, MKMapViewDelegate>
 
 @property (nonatomic, strong) CLLocationManager *location;
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (nonatomic) NSArray<Cafe *> *annotations;
 
 
 @end
@@ -25,16 +27,22 @@
     
     
     self.location = [[CLLocationManager alloc] init];
-    [NetworkManager getCoffee];
     self.location.delegate = self;
     [self.location requestWhenInUseAuthorization];
     self.location.desiredAccuracy = kCLLocationAccuracyKilometer;
     self.location.distanceFilter = kCLDistanceFilterNone;
     
- //   [self.location startUpdatingLocation];
     self.mapView.delegate = self;
     self.mapView.showsUserLocation = YES;
-    //43.6446486, -79.3971874
+
+    [NetworkManager getCoffee:self.location.location andCompletion:^(NSArray *completion){
+        self.annotations = completion;
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [self.mapView addAnnotations:self.annotations];
+            [self.mapView registerClass:[MKPinAnnotationView class] forAnnotationViewWithReuseIdentifier:@"pinAnnotation"];
+            [self.mapView showAnnotations:self.annotations animated:YES];
+        }];
+    }];
 
 }
 
@@ -61,10 +69,17 @@
             [self.location requestLocation];
             NSLog(@"Location: %f, %f",self.location.location.coordinate.latitude, self.location.location.coordinate.longitude);
             break;
-        
     }
+
     
-    
+}
+
+-(MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
+    if([annotation isKindOfClass:[Cafe class]]){
+        MKPinAnnotationView *pin = [mapView dequeueReusableAnnotationViewWithIdentifier:@"pinAnnotation"];
+        return pin;
+    }
+    return nil;
 }
 
 

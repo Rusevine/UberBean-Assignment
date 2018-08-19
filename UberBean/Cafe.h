@@ -7,9 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+@import CoreLocation;
+@import MapKit;
 
-@interface Cafe : NSObject
+@interface Cafe : NSObject <MKAnnotation>
 
+@property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 -(instancetype)initWithShop:(NSDictionary *)shop;
+
 
 @end

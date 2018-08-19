@@ -7,8 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+@import CoreLocation;
 
 @interface NetworkManager : NSObject
 
-+(void)getCoffee;
+
+
++(void)getCoffee:(CLLocation*)location andCompletion:(void (^)(NSArray *))completion;
+
 @end
