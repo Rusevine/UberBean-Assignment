@@ -7,12 +7,14 @@
 //
 
 #import "ViewController.h"
+#import "NetworkManager.h"
 
 
 @interface ViewController () <CLLocationManagerDelegate, MKMapViewDelegate>
 
 @property (nonatomic, strong) CLLocationManager *location;
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
+
 
 @end
 
@@ -23,6 +25,7 @@
     
     
     self.location = [[CLLocationManager alloc] init];
+    [NetworkManager getCoffee];
     self.location.delegate = self;
     [self.location requestWhenInUseAuthorization];
     self.location.desiredAccuracy = kCLLocationAccuracyKilometer;
@@ -31,7 +34,6 @@
  //   [self.location startUpdatingLocation];
     self.mapView.delegate = self;
     self.mapView.showsUserLocation = YES;
-                                  
     //43.6446486, -79.3971874
 
 }
@@ -57,6 +59,7 @@
         case kCLAuthorizationStatusAuthorizedWhenInUse:
         case kCLAuthorizationStatusAuthorizedAlways:
             [self.location requestLocation];
+            NSLog(@"Location: %f, %f",self.location.location.coordinate.latitude, self.location.location.coordinate.longitude);
             break;
         
     }
